@@ -5,5 +5,12 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Data"/>
+	<classpathentry kind="lib" path="/Data/lib/jdom-1.1.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="/Data/lib/jdom-1.1.2-sources.jar"/>
+	<classpathentry kind="lib" path="/Data/lib/jdom-1.1.2.jar" sourcepath="/Data/lib/jdom-1.1.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Data/lib/jdom-1.1.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

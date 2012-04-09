@@ -9,3 +9,4 @@ App/gen/cs247/group15/app/R.java
 App/proguard.cfg
 Server/.settings/org.eclipse.jdt.core.prefs
 *.class
+App/src/cs247/group15/data/*

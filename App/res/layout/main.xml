@@ -45,7 +45,7 @@
         android:layout_marginTop="10sp"
         android:layout_weight="0.31"
         android:text="Inference" 
-        android:textColour="#FFFFFF"/>
+        android:textColor="#FFFFFF"/>
 
     <TextView
         android:id="@+id/textView7"

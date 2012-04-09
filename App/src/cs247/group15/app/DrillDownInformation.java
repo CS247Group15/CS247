@@ -13,7 +13,7 @@ public class DrillDownInformation extends Activity {
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.main); //TODO: need to change this when the correct xml is created
+        setContentView(R.layout.main);
         
         information = (ImportantInformation) getIntent().getSerializableExtra(Constants.ImportantInformationTag);
 	}
