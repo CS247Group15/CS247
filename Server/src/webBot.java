@@ -6,6 +6,7 @@ public class webBot {
 	
 	public static void main(String[] args) {
 		
+		
 		String bbcUrl = "http://feeds.bbci.co.uk/news/rss.xml";
 		String bbcSourceDescription = "BBC News RSS Feed";
 		String guardianUrl = "http://feeds.guardian.co.uk/theguardian/world/rss";
@@ -17,7 +18,11 @@ public class webBot {
 		
 		rssReader guardianReader = new rssReader(guardianUrl, guardianSourceDescription);
 		guardianReader.start();
-	
+		
+		
+		googleTrendsReader google = new googleTrendsReader();
+		google.start();
+		
 	}
 	
 
