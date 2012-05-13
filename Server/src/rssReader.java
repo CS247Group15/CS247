@@ -41,6 +41,7 @@ public class rssReader extends Thread{
 		Statement stmt = null;
 		ResultSet rs = null;
 		Statement insert = null;
+		Statement delete = null;
 		String Title;
 		//SyndContent DescriptionContent = new SyndEntryImpl();
 		String Description;
@@ -80,6 +81,8 @@ public class rssReader extends Thread{
 					     	{
 									stmt = con.createStatement();
 									insert = con.createStatement();
+									delete = con.createStatement();
+									delete.execute("DELETE FROM rawdata where datediff(now(), rawdata.Date_Added) > 1");
 									rs = stmt.executeQuery("SELECT Headline FROM rawdata WHERE Headline = \"" + Title + "\";");
 									
 									if (!rs.next())

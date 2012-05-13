@@ -23,6 +23,12 @@ public class webBot {
 		googleTrendsReader google = new googleTrendsReader();
 		google.start();
 		
+		twitterReader twitter = new twitterReader();
+		twitter.start();
+		
+		tweetProcessor tweets = new tweetProcessor();
+		tweets.start();
+		
 	}
 	
 

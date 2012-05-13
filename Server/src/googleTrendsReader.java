@@ -2,6 +2,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.io.*;
 
@@ -33,6 +36,10 @@ public class googleTrendsReader extends Thread {
 					URL url = new URL("http://www.google.com/trends/");
 					Document doc = Jsoup.parse(url, 3000);
 					Elements tables = doc.select("table[class=hotTerm]");
+					if (tables.size() == 0)
+					{
+						System.out.println("Unable to read google trends");
+					}
 					while (i < 10){
 						Element table = tables.get(i);
 						Iterator<Element> ite = table.select("td").iterator();
@@ -44,9 +51,9 @@ public class googleTrendsReader extends Thread {
 						rs = stmt.executeQuery("SELECT Trend FROM Trends WHERE Trend = \"" + str + "\";");
 						if (!rs.next())
 						{	
-							
-							insert.executeUpdate("INSERT INTO Trends VALUES( \"" + str + "\");");
-							System.out.println("Added Trend to database: " + str);
+							System.out.println("INSERT INTO Trends VALUES( \"" + str + "\"" + ", '"+ getDateTime() +"');");
+							insert.executeUpdate("INSERT INTO Trends VALUES( \"" + str + "\"" + ", '"+ getDateTime() +"');");
+							//System.out.println("Added Trend to database: " + str);
 						}
 						i++;
 					}
@@ -58,6 +65,12 @@ public class googleTrendsReader extends Thread {
 				}
 		} 
 	}
+	
+	private String getDateTime() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
 	
 		private Connection getDatabaseConnection(){
 			Connection con = null;  			
