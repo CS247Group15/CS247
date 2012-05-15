@@ -18,6 +18,7 @@ public class Server {
 				try
 				{
 					Socket clientSocket = serverSocket.accept();
+					System.out.println("clientSocket has been made.");
 					new DataSender(clientSocket).start();
 					clientSocket.close();
 				}
