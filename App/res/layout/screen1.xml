@@ -6,8 +6,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
- 
-	<RelativeLayout 
+ 	<RelativeLayout 
     	android:id="@+id/relativelayout1"
     	android:layout_width="wrap_content"
     	android:layout_height="wrap_content">
@@ -33,37 +32,10 @@
 
 	</RelativeLayout>
 
-		<TextView
-        	android:id="@+id/textView3"
-        	android:layout_width="99dp"
-            android:layout_height="18dp"
-            android:layout_marginTop="10sp"
-            android:layout_marginLeft="10sp"
-            android:text="Date"/>
-	
-	<RelativeLayout
-	    	android:id="@+id/relativelayout2"
-    		android:layout_width="wrap_content"
-    		android:layout_height="wrap_content" >
-    	
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="87dp"
-            android:layout_height="17dp"
-            android:background="@drawable/gradient"
-            android:layout_marginLeft="10sp"
-            android:layout_marginTop="10sp" />
-
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="201dp"
-            android:layout_height="17dp"
-            android:layout_toRightOf="@+id/textView4"
-            android:text="@string/Update"
-            android:textSize="10dp" 
-			android:layout_marginRight="10sp"
-			android:layout_marginTop="10sp"
-			android:layout_marginLeft="20sp"/>
-
-    </RelativeLayout>
+ 	<ListView
+ 	    android:id="@+android:id/list"
+ 	    android:layout_width="fill_parent"
+ 	    android:layout_height="wrap_content" >
+ 	</ListView>
+		
 </LinearLayout>

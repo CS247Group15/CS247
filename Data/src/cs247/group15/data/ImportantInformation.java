@@ -19,8 +19,12 @@ public class ImportantInformation implements Serializable, XmlConverter {
 	{
 		this.heading = heading;
 	}
-
-	@Override
+	
+	public String toString()
+	{
+		return heading;
+	}
+	
 	public Element toXml() {
 		
 		Element rootElement = new Element(this.getClass().getSimpleName());
@@ -29,10 +33,8 @@ public class ImportantInformation implements Serializable, XmlConverter {
 		return rootElement;
 	}
 
-	@Override
 	public void fromXml(Element element) {
 		
 		heading = element.getChildText(headingtag);
-		
 	}
 }

@@ -9,12 +9,21 @@ public class DataRequest implements XmlConverter {
 	long dateFromWhen;
 	static final String dateFromWhenTag = "DateFromWhen";
 	
-	DataRequest(Calendar fromWhen)
+	public DataRequest(long fromWhen)
 	{
-		dateFromWhen = fromWhen.getTimeInMillis();
+		dateFromWhen = fromWhen;
 	}
 	
-	@Override
+	public DataRequest(Element element)
+	{
+		fromXml(element);
+	}
+	
+	public long getFromWhen()
+	{
+		return dateFromWhen;
+	}
+	
 	public Element toXml() {
 		
 		Element rootElement = new Element(this.getClass().getSimpleName());
@@ -23,7 +32,6 @@ public class DataRequest implements XmlConverter {
 		
 	}
 
-	@Override
 	public void fromXml(Element element) {
 		
 		dateFromWhen = Long.parseLong(element.getChildText(dateFromWhenTag));
