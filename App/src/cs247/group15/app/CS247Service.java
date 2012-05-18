@@ -1,5 +1,6 @@
 package cs247.group15.app;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -8,6 +9,14 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jdom.JDOMException;
 
 import cs247.group15.data.Constants;
@@ -33,18 +42,20 @@ public class CS247Service extends IntentService {
 	}
 
 	ServiceBinder binder;
-	
+
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public int onStartCommand (Intent intent, int flags, int startId)
+	{
 		Log.d(Constants.information, "The service has been started.");
 		binder = new ServiceBinder();
 		binder.startAutoUpdater();
-		//binder.sendRequest(Properties.getLastUpdate());
 		return START_STICKY;
 	}
-
+	
 	@Override
-	protected void onHandleIntent(Intent intent) {}
+	protected void onHandleIntent(Intent intent)
+	{
+	}
 	
 	@Override
 	public Binder onBind(Intent intent) {
@@ -91,32 +102,37 @@ public class CS247Service extends IntentService {
 		
 		public void sendRequest(long date, OnRequestComplete listener)
 		{
-			/*DataSender ds = null;
+			Log.d(Constants.information, "Sending request to: " + Constants.serverURL);
+			HttpClient httpclient = new DefaultHttpClient();
+		    HttpResponse response;
 			try {
-				Log.d(Constants.information, "Sending data request with date: " + date);
-				ds = new DataSender(new DataRequest(date));
-				Properties.setLastUpdate(System.currentTimeMillis()); //use date of last item in returned list!
-				//TODO: might want to put a "correction constant" in here to allow for delay between updates being available & getting the updates
-			} 
-			catch (UnknownHostException e) {
-				Log.d(Constants.error, e.getMessage());
+				response = httpclient.execute(new HttpGet(Constants.serverURL));
+				StatusLine statusLine = response.getStatusLine();
+			    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+			        ByteArrayOutputStream out = new ByteArrayOutputStream();
+					response.getEntity().writeTo(out);
+			        out.close();
+			        String responseString = out.toString();
+			        Log.d("TEST", responseString);
+
+			        listener.onSuccess();
+			        checkNotifications(new ArrayList<ImportantInformation>()); //put the list of new infos into here
+			    } 
+			    else
+			    {
+			        //Closes the connection.
+			        response.getEntity().getContent().close();
+			        throw new IOException(statusLine.getReasonPhrase());
+			    }
+			} catch (ClientProtocolException e) {
+				listener.onFail();
 				e.printStackTrace();
-			} 
-			catch (IOException e) {
-				Log.d(Constants.error, e.getMessage());
-				e.printStackTrace();
-			} 
-			catch (JDOMException e) {
-				Log.d(Constants.error, e.getMessage());
+			} catch (IOException e) {
+				listener.onFail();
 				e.printStackTrace();
 			}
-			
-			if(ds!=null)
+			finally //delete this when not testing!!!!
 			{
-				Log.d(Constants.information, ds.getList().toString());
-				listOfInformation = ds.getList();
-			}*/
-			
 	        //Test data
 			listOfInformation.clear(); //usually would just check for "outofdate" informations & add the new ones to the list
 			ArrayList<String> sources = new ArrayList<String>();
@@ -134,7 +150,8 @@ public class CS247Service extends IntentService {
 	        listOfInformation.add(new ImportantInformation("News5", new Date(458678968)));
 	        listOfInformation.add(new ImportantInformation("News6", new Date(458678969)));
 	        listener.onSuccess();
-	        checkNotifications(listOfInformation); //put the list of new infos into here
+	        checkNotifications(new ArrayList<ImportantInformation>());
+	        }
 		}
 		
 		private void startAutoUpdater()
