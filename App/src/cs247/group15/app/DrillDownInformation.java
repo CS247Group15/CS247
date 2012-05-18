@@ -49,11 +49,10 @@ public class DrillDownInformation extends Activity {
 			((TextView)findViewById(R.id.otherInfoBox)).setText(information.getOther());
 			String sources = "";
 			List<String> sourcesList = information.getSources();
-			for(int i = 0; i<sourcesList.size()-1; i++)
+			for(int i = 0; i<sourcesList.size(); i++)
 			{
 				sources += (sourcesList.get(i)+"\n");
 			}
-			sources += sourcesList.get(sourcesList.size()-1);
 			((TextView)findViewById(R.id.sourcesBox)).setText(sources);
 		}
 	}
