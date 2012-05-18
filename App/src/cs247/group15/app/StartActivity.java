@@ -112,7 +112,7 @@ public class StartActivity extends ListActivity {
 		
 		public void onServiceConnected(ComponentName name, IBinder iService) {
 			service = (ServiceBinder) iService;
-			updateScreen(service.getDatedImportantInformationList());
+			service.sendRequest(System.currentTimeMillis(), screenUpdater);
 		}
 	};
     
@@ -167,24 +167,26 @@ public class StartActivity extends ListActivity {
     	{
 	    	if(service!=null)
 	    	{
-	    		service.sendRequest(System.currentTimeMillis(), new OnRequestComplete() {
-					
-					public void onSuccess() {
-			    		updateScreen(service.getDatedImportantInformationList());
-					}
-					
-					public void onFail() {
-						runOnUiThread(new Runnable() {
-							
-							public void run() {
-								Toast.makeText(getApplicationContext(), "Error occurred when requesting update", Toast.LENGTH_LONG).show();
-							}
-						});
-					}
-				});
+	    		service.sendRequest(System.currentTimeMillis(), screenUpdater);
 	    	}
     	}
     	return super.onOptionsItemSelected(item);
     }
+    
+    OnRequestComplete screenUpdater = new OnRequestComplete() {
+		
+		public void onSuccess() {
+    		updateScreen(service.getDatedImportantInformationList());
+		}
+		
+		public void onFail() {
+			runOnUiThread(new Runnable() {
+				
+				public void run() {
+					Toast.makeText(getApplicationContext(), "Error occurred when requesting update", Toast.LENGTH_LONG).show();
+				}
+			});
+		}
+	};
     
 }
