@@ -20,6 +20,8 @@ public class ImportantInformation implements Serializable, XmlConverter, ListCla
 	private final static String headingtag = "Heading";
 	private PrintableDate date;
 	private final static String datetag = "Date";
+	private int importanceLevel = 0;
+	private final static String importanceLevelTag = "Importance";
 	private String inference= "";
 	private final static String inferenceTag = "Inference";
 	private List<String> sources = new ArrayList<String>();
@@ -34,9 +36,10 @@ public class ImportantInformation implements Serializable, XmlConverter, ListCla
 		if(date instanceof PrintableDate) {this.date = (PrintableDate)date;}
 		else {this.date = new PrintableDate(date);}
 	}
-	public ImportantInformation(String heading, Date date, String inference, List<String> sources, String otherInfo)
+	public ImportantInformation(String heading, int importance, Date date, String inference, List<String> sources, String otherInfo)
 	{
 		this.heading = heading;
+		this.importanceLevel = importance;
 		if(date instanceof PrintableDate) {this.date = (PrintableDate)date;}
 		else {this.date = new PrintableDate(date);}
 		this.inference = inference;
