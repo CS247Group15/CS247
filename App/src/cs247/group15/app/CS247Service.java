@@ -56,17 +56,20 @@ public class CS247Service extends IntentService {
 		{
 	        //Test data
 			listOfInformation.clear();
-			listOfInformation.add(new ImportantInformation("News1", new Date(54546)));
+			ArrayList<String> sources = new ArrayList<String>();
+			sources.add("this is a source");
+			sources.add("this is another source");
+			listOfInformation.add(new ImportantInformation("News1", new Date(54546), "this is inference", sources, "this is other"));
 			listOfInformation.add(new ImportantInformation("News2", new Date(54547)));
-			listOfInformation.add(new ImportantInformation("News1", new Date(23456778)));
-			listOfInformation.add(new ImportantInformation("News2", new Date(23456779)));
-			listOfInformation.add(new ImportantInformation("News3", new Date(23456780)));
+			listOfInformation.add(new ImportantInformation("News1", new Date(234567781)));
+			listOfInformation.add(new ImportantInformation("News2", new Date(234567791)));
+			listOfInformation.add(new ImportantInformation("News3", new Date(234567801)));
 			listOfInformation.add(new ImportantInformation("News1", new Date(456789678)));
 	        listOfInformation.add(new ImportantInformation("News2", new Date(456789679)));
-	        listOfInformation.add(new ImportantInformation("News3", new Date(456789680)));
-	        listOfInformation.add(new ImportantInformation("News4", new Date(456789681)));
-	        listOfInformation.add(new ImportantInformation("News5", new Date(456789688)));
-	        listOfInformation.add(new ImportantInformation("News6", new Date(456789695)));
+	        listOfInformation.add(new ImportantInformation("News3", new Date(458678968)));
+	        listOfInformation.add(new ImportantInformation("News4", new Date(458678968)));
+	        listOfInformation.add(new ImportantInformation("News5", new Date(458678968)));
+	        listOfInformation.add(new ImportantInformation("News6", new Date(458678969)));
 	        
 			return listOfInformation;
 		}
@@ -99,9 +102,9 @@ public class CS247Service extends IntentService {
 			return datedList;
 		}
 		
-		/*public List<ImportantInformation> sendRequest(long date)
+		public void sendRequest(long date, OnRequestComplete listener)
 		{
-			DataSender ds = null;
+			/*DataSender ds = null;
 			try {
 				Log.d(Constants.information, "Sending data request with date: " + date);
 				ds = new DataSender(new DataRequest(date));
@@ -124,10 +127,9 @@ public class CS247Service extends IntentService {
 			if(ds!=null)
 			{
 				Log.d(Constants.information, ds.getList().toString());
-				return ds.getList();
-			}
-			else {return null;}
-		}*/
+				listOfInformation = ds.getList();
+			}*/
+		}
 		
 	}
 

@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class StartActivity extends ListActivity {
@@ -134,17 +135,21 @@ public class StartActivity extends ListActivity {
     	}
     }
     
-    private void updateScreen(ArrayList<ListClass> list)
+    private void updateScreen(final ArrayList<ListClass> list)
     {
-		listItems.clear();
-		for(ListClass item : list)
-		{
-			listItems.add(item);
-		}
-		if(adapter!=null)
-		{
-			adapter.notifyDataSetChanged();
-		}
+    	runOnUiThread(new Runnable(){
+
+			public void run() {
+				listItems.clear();
+				for(ListClass item : list)
+				{
+					listItems.add(item);
+				}
+				if(adapter!=null)
+				{
+					adapter.notifyDataSetChanged();
+				}
+			}});
     }
     
     //MENU
@@ -160,8 +165,24 @@ public class StartActivity extends ListActivity {
     {
     	if(item.getTitle().equals("Update"))
     	{
-	    	//TODO: implement this & change the list in method below to be the new list
-	    	updateScreen(listItems);
+	    	if(service!=null)
+	    	{
+	    		service.sendRequest(System.currentTimeMillis(), new OnRequestComplete() {
+					
+					public void onSuccess() {
+			    		updateScreen(service.getDatedImportantInformationList());
+					}
+					
+					public void onFail() {
+						runOnUiThread(new Runnable() {
+							
+							public void run() {
+								Toast.makeText(getApplicationContext(), "Error occurred when requesting update", Toast.LENGTH_LONG).show();
+							}
+						});
+					}
+				});
+	    	}
     	}
     	return super.onOptionsItemSelected(item);
     }
