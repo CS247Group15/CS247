@@ -165,9 +165,12 @@ public class CS247Service extends IntentService {
 						
 						public void onSuccess() {
 							//Set last updated time to the time associated with the last ImportantInformation received
-							Properties.setLastUpdate(
+							if(listOfInformation.size()>0)
+							{
+								Properties.setLastUpdate(
 									listOfInformation.get(listOfInformation.size()-1).getDate().getTime()
-							);
+									);
+							}
 						}
 						
 						public void onFail() {}
