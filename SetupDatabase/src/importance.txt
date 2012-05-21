@@ -1,0 +1,5 @@
+bank/10
+economic/20
+fund/10
+funds/10
+bankrupt/30

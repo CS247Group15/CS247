@@ -1,0 +1,6 @@
+explosion/-10
+hope/10
+health/10
+peace/10
+accident/-10
+war/-10
