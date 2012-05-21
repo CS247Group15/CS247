@@ -1,4 +1,3 @@
-package cs247.group15.server;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -34,12 +33,15 @@ public class tweetProcessor extends Thread {
 					Statement populateTweets = con.createStatement();
 					String tempString = "";
 					Statement checkTweets = con.createStatement();
+					Statement checkProcessed = con.createStatement();
 					//Statement findProcessed = con.createStatement();
 					//Statement insert = con.createStatement();
 					ResultSet rs = null;
 					ResultSet processed = null;
 					ResultSet allTrends = null;
 					ResultSet tweetExists = null;
+					ResultSet duplicateProcessed = null;
+					String tmp = "";
 					int i = 0;
 
 					
@@ -48,10 +50,11 @@ public class tweetProcessor extends Thread {
 					
 					while ( allTrends.next() )
 					{
-
+						tmp = allTrends.getString(1);
+						tmp = escapeChars(tmp);
 						System.out.println(i++);
-						System.out.println("SELECT trend FROM processedTrends WHERE trend = \"" + allTrends.getString(1) + "\";");
-						rs = stmt.executeQuery("SELECT * FROM processedTrends WHERE trend = \"" + allTrends.getString(1) + "\";");
+						System.out.println("SELECT trend FROM processedTrends WHERE trend = \"" + tmp + "\";");
+						rs = stmt.executeQuery("SELECT * FROM processedTrends WHERE trend = \"" + tmp + "\";");
 						System.out.println("Got here.");
 						
 					if (!rs.next())
@@ -76,12 +79,18 @@ public class tweetProcessor extends Thread {
 							}
 						
 							//end populate tweet database
-							System.out.println("INSERT INTO processedTrends VALUES ( \"" + allTrends.getString(1) + "\" , " + getDateTime() + "\");");
-							insert.execute("INSERT INTO processedTrends VALUES ( \"" + allTrends.getString(1) + "\" , \"" + getDateTime() + "\");");
+							
+							duplicateProcessed = checkProcessed.executeQuery("SELECT trend FROM processedTrends WHERE trend = \"" + tempString + "\" ;");
+							if (!duplicateProcessed.next()){
+								System.out.println("INSERT INTO processedTrends VALUES ( \"" + tempString + "\" , " + getDateTime() + "\");");
+								insert.execute("INSERT INTO processedTrends VALUES ( \"" + tempString + "\" , \"" + getDateTime() + "\");");
+							}
 						}
-
+					System.out.println("looping");
 					}
 					Thread.sleep(60000);
+					System.out.println("sleeping 1 minute.");
+					
 					rs.close();
 					processed.close();
 					allTrends.close();

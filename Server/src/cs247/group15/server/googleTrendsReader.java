@@ -1,4 +1,3 @@
-package cs247.group15.server;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,6 +45,7 @@ public class googleTrendsReader extends Thread {
 						Iterator<Element> ite = table.select("td").iterator();
 						ite.next();
 						str = ite.next().text();
+						str = escapeChars(str);
 						
 						stmt = con.createStatement();
 						insert = con.createStatement();
@@ -89,6 +89,14 @@ public class googleTrendsReader extends Thread {
 					e.printStackTrace();
 				}
 			return con;
+		}
+		
+		private String escapeChars(String str) {
+			str = str.replaceAll("'", "\\\\'");
+			str = str.replaceAll("\"", "\\\\\"");
+			str = str.replaceAll(",", "\\\\,");
+			str = str.replaceAll("\\<.*?\\>", "");
+			return str;
 		}
 		
 		

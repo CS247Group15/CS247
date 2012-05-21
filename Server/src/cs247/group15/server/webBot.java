@@ -1,4 +1,3 @@
-package cs247.group15.server;
 import java.net.URL;
 import java.io.*;
 import java.net.*;

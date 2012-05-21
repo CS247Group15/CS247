@@ -1,4 +1,3 @@
-package cs247.group15.server;
 import java.util.Calendar;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,6 +26,7 @@ public class twitterReader extends Thread {
 		ResultSet rs = null;
 		Statement insert = null;
 		Statement delete = null;
+		String tmpStr = "";
         try {
         	while (true)
         	{
@@ -42,15 +42,17 @@ public class twitterReader extends Thread {
 	                	stmt = con.createStatement();
 						insert = con.createStatement();
 						delete = con.createStatement();
+						tmpStr = escapeChars(trend.getName());
 						delete.execute("DELETE FROM trends where datediff(now(), trends.Date_Added) > 1");
-						rs = stmt.executeQuery("SELECT Trend FROM Trends WHERE Trend = \"" + trend.getName() + "\";");
+						rs = stmt.executeQuery("SELECT Trend FROM Trends WHERE Trend = \"" + tmpStr + "\";");
 						if (!rs.next())
 						{	
-							System.out.println("INSERT INTO Trends VALUES( \"" + trend.getName() + "\"" + ", '"+ getDateTime() +"');");
-							insert.executeUpdate("INSERT INTO Trends VALUES( \"" + trend.getName() + "\"" + ", '"+ getDateTime() +"');");
+							System.out.println("INSERT INTO Trends VALUES( \"" + tmpStr + "\"" + ", '"+ getDateTime() +"');" + "from twitter");
+							
+							insert.executeUpdate("INSERT INTO Trends VALUES( \"" + tmpStr + "\"" + ", '"+ getDateTime() +"');");
 							//System.out.println("Added Trend to database: " + str);
 						}
-	                    System.out.println(" " + trend.getName());
+	                   // System.out.println(" " + trend.getName());
 	                }
 	            }
 
@@ -86,6 +88,13 @@ public class twitterReader extends Thread {
 					e.printStackTrace();
 				}
 			return con;
+		}
+		private String escapeChars(String str) {
+			str = str.replaceAll("'", "\\\\'");
+			str = str.replaceAll("\"", "\\\\\"");
+			str = str.replaceAll(",", "\\\\,");
+			str = str.replaceAll("\\<.*?\\>", "");
+			return str;
 		}
 	
 }
