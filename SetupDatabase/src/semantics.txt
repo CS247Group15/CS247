@@ -4,3 +4,16 @@ health/10
 peace/10
 accident/-10
 war/-10
+seriously/-10
+hurt/-10
+injured/-10
+optimistic/10
+kill/-10
+attack/-10
+funeral/-10
+death/-10
+murder/-10
+murders/-10
+deaths/-10
+funerals/-10
+slump/-10

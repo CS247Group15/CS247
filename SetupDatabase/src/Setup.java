@@ -121,10 +121,10 @@ public class Setup {
 
 		String createString;
 		createString = "create table rawdata (" +
-							"Title VARCHAR(300), " +
+							"Title VARCHAR(300) NOT NULL, " +
 							"Description VARCHAR(500), " +
 							"Source VARCHAR(500), " +
-							"Date DATE)";
+							"Date DATE);";
 		try {
 			create = con.createStatement();
 			create.executeUpdate(createString);
@@ -144,8 +144,8 @@ public class Setup {
 
 		String createString;
 		createString = "create table Words (" +
-							"Word VARCHAR(30), " +
-							"Value INTEGER)";
+							"Word VARCHAR(30) NOT NULL, " +
+							"Value INTEGER);";
 		try {
 			create = con.createStatement();
 			create.executeUpdate(createString);
