@@ -63,6 +63,8 @@ public class Analysis {
 			String description=null;
 			String source=null;
 			String date=null;
+			String tmp = "";
+			String tmp2 = "";
 			
 			int tempValue=0;
 			int totalValue=0;
@@ -81,18 +83,18 @@ public class Analysis {
 					if (rawRes.next())
 					{
 						title = rawRes.getString(1);
-						
-						System.out.println("Entry found in table: " + title);
+						tmp = escapeChars(title);
+						System.out.println("Entry found in table: " + tmp);
 						searchFinal = con.createStatement();
-						finalRes = searchFinal.executeQuery("SELECT * FROM finalData WHERE Title = \"" + title + "\";");
+						finalRes = searchFinal.executeQuery("SELECT * FROM finalData WHERE Title = \"" + tmp + "\";");
 						if (finalRes.next())
 						{
-							System.out.println("The entry already exists in finaldata: " + title);
+							System.out.println("The entry already exists in finaldata: " + tmp);
 							loop=1;
 						}
 						else
 						{
-							System.out.println("The story: " + title + " doesn't exist in finaldata");
+							System.out.println("The story: " + tmp + " doesn't exist in finaldata");
 						}
 						searchFinal.close();
 						
@@ -139,8 +141,9 @@ public class Analysis {
 			
 			if (cont==1)	//If the story doesn't exist in finaldata yet, continue.
 			{
-				
-				insertStoryToFinalData(title,description,source,date);
+				String tmpDes = escapeChars(description);
+				String tmpSource = escapeChars(source);
+				insertStoryToFinalData(tmp,tmpDes,tmpSource,date);
 
 				words = breakWords(description);
 				
@@ -151,7 +154,9 @@ public class Analysis {
 					{
 						tempValue=0;
 						search = con.createStatement();
-						searchRes = search.executeQuery("SELECT * FROM words WHERE Word = \"" + words[x] + "\";");
+						System.out.println(words[x]);
+						tmp2 = escapeChars(words[x]);
+						searchRes = search.executeQuery("SELECT * FROM words WHERE Word = \"" + tmp2 + "\";");
 						if (searchRes.next())
 						{
 							word = searchRes.getString(1);
@@ -167,7 +172,8 @@ public class Analysis {
 				}
 				catch (SQLException ex)
 				{
-					System.out.println("Could not find story with title " + title);
+					ex.printStackTrace();
+					//System.out.println("Could not find story with title " + title);
 				}
 			
 				//Send through Nountrack to pull out nouns. Update the noun total.
@@ -253,7 +259,13 @@ public class Analysis {
 		}	//End of continous while loop
 	}
 	
-	
+	private static String escapeChars(String str) {
+		str = str.replaceAll("'", "\\\\'");
+		str = str.replaceAll("\"", "\\\\\"");
+		str = str.replaceAll(",", "\\\\,");
+		str = str.replaceAll("\\<.*?\\>", "");
+		return str;
+	}
 	public static int importantWordValue(String word)
 	{
 		int returnValue=0;
@@ -524,12 +536,13 @@ public class Analysis {
 				e.printStackTrace();
 			}
 		try {
-			con =DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root","password");
+			con =DriverManager.getConnection("jdbc:mysql://localhost:3306/rawdata","user","root");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		return con;
 	}
+
 
 }
