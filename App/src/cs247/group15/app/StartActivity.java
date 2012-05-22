@@ -13,6 +13,7 @@ import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -38,6 +39,7 @@ public class StartActivity extends ListActivity {
 	ArrayList<ListClass> listItems;
 	ArrayAdapter<ListClass> adapter;
 	ServiceBinder service;
+	TextView serverStatus;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,9 @@ public class StartActivity extends ListActivity {
         Log.d(Constants.information, "Starting the service.");
         startService(new Intent(StartActivity.this, CS247Service.class));
         bindService(new Intent(StartActivity.this, CS247Service.class), serviceConnection, 0);
+        
+        //
+        serverStatus = (TextView)findViewById(R.id.serverstatus);
         
         //This stores the list of ImportantInformations
         listItems = new ArrayList<ListClass>();
@@ -182,6 +187,8 @@ public class StartActivity extends ListActivity {
 		
 		public void onSuccess() {
     		updateScreen(service.getDatedImportantInformationList());
+    		serverStatus.setText("Server Online");
+    		serverStatus.setBackgroundColor(Color.GREEN);
 		}
 		
 		public void onFail() {
@@ -189,6 +196,8 @@ public class StartActivity extends ListActivity {
 				
 				public void run() {
 					Toast.makeText(getApplicationContext(), "Error occurred when requesting update", Toast.LENGTH_LONG).show();
+					serverStatus.setText("Server Offline");
+					serverStatus.setBackgroundColor(Color.RED);
 				}
 			});
 		}
