@@ -17,3 +17,10 @@ murders/-10
 deaths/-10
 funerals/-10
 slump/-10
+bankrupt/-10
+bail-out/-10
+profit/10
+profits/10
+failed/-10
+fail/-10
+failure/-10

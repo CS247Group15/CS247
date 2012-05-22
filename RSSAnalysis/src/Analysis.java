@@ -168,6 +168,14 @@ public class Analysis {
 						search.close();
 					}
 					insert = con.createStatement();
+					if (totalValue>50)		//If the semantic value crosses the max or min bounds, then set move the score back into the bounds.
+					{
+						totalValue=50;
+					}
+					if (totalValue<-50)
+					{
+						totalValue=-50;
+					}
 					insert.executeUpdate("UPDATE finalData SET Sentiment=\'" + totalValue + "\' WHERE Title=\"" + title + "\";");
 					insert.close();
 				}
@@ -227,18 +235,33 @@ public class Analysis {
 				
 				tempValue=0;
 				importanceValue=0;
+				wordList = breakWords(title+ " " + description);		//Change wordList to be both the title
+				String importantList=null;		//This is the list of important words in the story, which is output so that the app can display how the importance number was influenced
 				
 				for (int x=0; x<wordList.length; x++)	//Try calculating the important words amount
 				{
+					tempValue=0;
 					tempValue = importantWordValue(wordList[x].toLowerCase());
 					//System.out.println("Checked the importance of: " + wordList[x].toLowerCase() + " returned a value of: " + tempValue);
 					importanceValue=tempValue+importanceValue;
+					if (tempValue!=0)
+					{
+						if (importantList!=null)
+						{
+							importantList = importantList + ", " + wordList[x];
+						}
+						else
+						{
+							importantList = wordList[x];
+						}
+					}
 				}
 				
 				try
 				{
 					insert = con.createStatement();
 					insert.executeUpdate("UPDATE finalData SET Importance = \'" + importanceCalc((float)nounValue,(float)twitterValue, (float)importanceValue) + "\' WHERE Title = \"" + title + "\";");
+					insert.executeUpdate("UPDATE finalData SET ImportantNouns = \"" + importantList + "\" WHERE Title = \"" + title + "\";");
 					insert.close();
 				}
 				catch (SQLException ex)
@@ -246,9 +269,6 @@ public class Analysis {
 					System.out.println("Problem updating finaldata");
 				}
 			}	//End of if statement that checks if the story has been processed already
-			
-			
-			
 			
 			
 			try
@@ -416,6 +436,7 @@ public class Analysis {
 	{
 		int sentiment = 0;
 		int importance = 0;
+		String importantNouns=" ";
 		
 		Connection con = getDatabaseConnection();
 		Statement insert;
@@ -423,12 +444,13 @@ public class Analysis {
 		try
 		{
 			insert = con.createStatement();
-			insert.executeUpdate("INSERT INTO finalData VALUES(\"" + title + "\", \"" + description + "\", \"" + source + "\", \"" + date + "\", \'" + sentiment + "\', \'" + importance + "\');");
+			insert.executeUpdate("INSERT INTO finalData VALUES(\"" + title + "\", \"" + description + "\", \"" + source + "\", \"" + date + "\", \'" + sentiment + "\', \'" + importance + "\', \"" + importantNouns + "\");");
 			insert.close();
 			con.close();
 		}
 		catch (SQLException ex)
 		{
+			ex.printStackTrace();
 			System.out.println("Error inserting into finalData");
 		}
 	}
