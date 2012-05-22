@@ -13,6 +13,7 @@ import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -61,13 +62,17 @@ public class StartActivity extends ListActivity {
         			{
         				if(listItems.get(position) instanceof ImportantInformation)
         				{
+        					ImportantInformation info = (ImportantInformation)listItems.get(position);
         					if(convertView.findViewById(R.id.titletext)==null)
         					{
         						convertView = ((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.row_element, null);
         					}
 	        				View v = super.getView(position, convertView, parent);
 	        				TextView tv = ((TextView)v.findViewById(R.id.titletext));
-	        				tv.setText(tv.getText()+"!");
+	        				if(info.getImportance()>Properties.getRequiredImportanceLevel())
+	        				{
+	        					tv.setTypeface(null, Typeface.BOLD);
+	        				}
 	        				ImageView iv = ((ImageView)v.findViewById(R.id.gradientimage));
 	        				return v;
         				}
@@ -112,7 +117,7 @@ public class StartActivity extends ListActivity {
 		
 		public void onServiceConnected(ComponentName name, IBinder iService) {
 			service = (ServiceBinder) iService;
-			service.sendRequest(System.currentTimeMillis(), screenUpdater);
+			service.sendRequest(screenUpdater);
 		}
 	};
     
@@ -167,7 +172,7 @@ public class StartActivity extends ListActivity {
     	{
 	    	if(service!=null)
 	    	{
-	    		service.sendRequest(System.currentTimeMillis(), screenUpdater);
+	    		service.sendRequest(screenUpdater);
 	    	}
     	}
     	return super.onOptionsItemSelected(item);

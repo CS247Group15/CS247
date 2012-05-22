@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -18,6 +19,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jdom.JDOMException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import cs247.group15.data.Constants;
 import cs247.group15.data.DataRequest;
@@ -33,6 +37,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Binder;
 import android.provider.ContactsContract.CommonDataKinds.Im;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 public class CS247Service extends IntentService {
@@ -100,7 +105,7 @@ public class CS247Service extends IntentService {
 			return datedList;
 		}
 		
-		public void sendRequest(long date, OnRequestComplete listener)
+		public void sendRequest(OnRequestComplete listener)
 		{
 			Log.d(Constants.information, "Sending request to: " + Constants.serverURL);
 			HttpClient httpclient = new DefaultHttpClient();
@@ -114,9 +119,45 @@ public class CS247Service extends IntentService {
 			        out.close();
 			        String responseString = out.toString();
 			        Log.d("TEST", responseString);
-
+			        
+			        List<ImportantInformation> newInfo = new ArrayList<ImportantInformation>();
+			        JSONObject json = new JSONObject(responseString);
+			        JSONArray newsArray = json.getJSONArray("news");
+			        for(int i=0; i<newsArray.length(); i++)
+			        {
+			        	JSONObject item = newsArray.getJSONObject(i);
+			        	String heading = item.getString("Title");
+			        	String description = item.getString("Description");
+			        	String source = item.getString("Source");
+			        	String date = item.getString("Date");
+			        	int year = Integer.parseInt(date.substring(0, 4));
+			        	int month = Integer.parseInt(date.substring(5,7));
+			        	int day = Integer.parseInt(date.substring(8));
+			        	Date dateDate = new Date(year, month, day);
+			        	String sentiment = item.getString("Sentiment");
+			        	int sentimentInt = Integer.parseInt(sentiment);
+			        	String importance = item.getString("Importance");
+			        	int importanceInt = Integer.parseInt(importance);
+			        	String nouns = item.getString("Important Words");
+			        	
+			        	ImportantInformation info = new ImportantInformation(heading, importanceInt, sentimentInt, dateDate, description, source, nouns);
+			        	if(!listOfInformation.contains(info))
+			        	{
+			        		newInfo.add(info);
+			        		listOfInformation.add(info);
+			        	}
+			        }
+			        
+			        //sort by date
+			        Collections.sort(listOfInformation);
+			        
+			        for(int i = 20; i<listOfInformation.size(); i++)
+			        {
+			        	listOfInformation.remove(i);
+			        }
+			        
 			        listener.onSuccess();
-			        checkNotifications(new ArrayList<ImportantInformation>()); //put the list of new infos into here
+			        checkNotifications(newInfo); //put the list of new infos into here
 			    } 
 			    else
 			    {
@@ -130,28 +171,10 @@ public class CS247Service extends IntentService {
 			} catch (IOException e) {
 				listener.onFail();
 				e.printStackTrace();
+			} catch (JSONException e) {
+				listener.onFail();
+				e.printStackTrace();
 			}
-			finally //delete this when not testing!!!!
-			{
-	        //Test data
-			listOfInformation.clear(); //usually would just check for "outofdate" informations & add the new ones to the list
-			ArrayList<String> sources = new ArrayList<String>();
-			sources.add("this is a source");
-			sources.add("this is another source");
-			listOfInformation.add(new ImportantInformation("News1", 8, new Date(54546), "this is inference", sources, "this is other"));
-			listOfInformation.add(new ImportantInformation("News2", new Date(54547)));
-			listOfInformation.add(new ImportantInformation("News1", new Date(234567781)));
-			listOfInformation.add(new ImportantInformation("News2", new Date(234567791)));
-			listOfInformation.add(new ImportantInformation("News3", new Date(234567801)));
-			listOfInformation.add(new ImportantInformation("News1", new Date(456789678)));
-	        listOfInformation.add(new ImportantInformation("News2", new Date(456789679)));
-	        listOfInformation.add(new ImportantInformation("News3", new Date(458678968)));
-	        listOfInformation.add(new ImportantInformation("News4", new Date(458678968)));
-	        listOfInformation.add(new ImportantInformation("News5", new Date(458678968)));
-	        listOfInformation.add(new ImportantInformation("News6", new Date(458678969)));
-	        listener.onSuccess();
-	        checkNotifications(new ArrayList<ImportantInformation>());
-	        }
 		}
 		
 		private void startAutoUpdater()
@@ -161,7 +184,7 @@ public class CS247Service extends IntentService {
 
 				@Override
 				public void run() {
-					sendRequest(Properties.getLastUpdate(), new OnRequestComplete() {
+					sendRequest(new OnRequestComplete() {
 						
 						public void onSuccess() {
 							//Set last updated time to the time associated with the last ImportantInformation received
@@ -185,7 +208,7 @@ public class CS247Service extends IntentService {
 			for(int i = 0; i<newList.size(); i++)
 			{
 				ImportantInformation info = newList.get(i);
-				if(info.getImportance()>=Properties.getImportanceLevel())
+				if(info.getImportance()>=Properties.getRequiredImportanceLevel())
 				{
 					Notification not = new Notification(R.drawable.ic_launcher, info.toString(), System.currentTimeMillis());
 					
