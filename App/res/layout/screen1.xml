@@ -14,6 +14,7 @@
     	    android:layout_height="wrap_content"
     	    android:layout_alignLeft="@+id/textView1"
     	    android:layout_alignParentTop="true"
+    	    android:textColor="#ff000000"
     	    android:text="Server Online"
     	    android:textAppearance="?android:attr/textAppearanceSmall" />
     
