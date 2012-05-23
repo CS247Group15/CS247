@@ -43,7 +43,7 @@ public class Constants {
 	}
 	
 	//Constants relating to connecting to the server
-	public static final String serverURL = "http://81.109.100.98:8085/JavaServlet/Servlet";
+	public static String serverURL = "";//"http://81.109.100.98:8085/JavaServlet/Servlet";
 	
 	//Constants for debugging
 	public static final String error = "ERROR";

@@ -7,9 +7,10 @@ public class Properties {
 	//This is time of the last update
 	private static long lastUpdate = 0L;
 	//This is the level of importance that the user will be alerted about (will be 0 if alerts are off)
-	private static int importanceLevel = 5;
+	//Will be an integer, max of 100
+	private static int importanceLevel = 50;
 	//This is the level of importance that the user wants to be alerted about
-	private static int requiredImportanceLevel = 5;
+	private static int requiredImportanceLevel = 50;
 
 	public static void setUpdateFrequency(long updateFrequency) {
 		Properties.updateFrequency = updateFrequency;

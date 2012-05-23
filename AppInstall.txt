@@ -1,0 +1,14 @@
+There is an apk file included, which will install the app
+directly onto a phone by running it.
+
+If an alternative is required, you can build yourself a 
+version using Eclipse and the project contained in the App
+folder.
+
+When the app has been installed onto a phone, a dialog 
+will display into which the IP address that the server is
+running on should be entered. (If a manual build is being 
+used then the serverIp variable in the Constants file can
+be set to the required IP address. An example is given as
+a comment beside this variable, which shows the required
+format for the address.)
