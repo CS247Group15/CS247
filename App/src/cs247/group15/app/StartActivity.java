@@ -68,7 +68,7 @@ public class StartActivity extends ListActivity {
         				if(listItems.get(position) instanceof ImportantInformation)
         				{
         					ImportantInformation info = (ImportantInformation)listItems.get(position);
-        					if(convertView.findViewById(R.id.titletext)==null)
+        					if(convertView==null||convertView.findViewById(R.id.titletext)==null)
         					{
         						convertView = ((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.row_element, null);
         					}
@@ -78,7 +78,115 @@ public class StartActivity extends ListActivity {
 	        				{
 	        					tv.setTypeface(null, Typeface.BOLD);
 	        				}
+	        				else
+	        				{
+	        					tv.setTypeface(null, Typeface.NORMAL);
+	        				}
 	        				ImageView iv = ((ImageView)v.findViewById(R.id.gradientimage));
+	        				switch(info.getSentimence())
+	        				{
+	        				case -50 : iv.setImageResource(R.drawable.slider0001); break;
+	        				case -49 : iv.setImageResource(R.drawable.slider0002); break;
+	        				case -48 : iv.setImageResource(R.drawable.slider0003); break;
+	        				case -47 : iv.setImageResource(R.drawable.slider0004); break;
+	        				case -46 : iv.setImageResource(R.drawable.slider0005); break;
+	        				case -45 : iv.setImageResource(R.drawable.slider0006); break;
+	        				case -44 : iv.setImageResource(R.drawable.slider0007); break;
+	        				case -43 : iv.setImageResource(R.drawable.slider0008); break;
+	        				case -42 : iv.setImageResource(R.drawable.slider0009); break;
+	        				case -41 : iv.setImageResource(R.drawable.slider0010); break;
+	        				case -40 : iv.setImageResource(R.drawable.slider0011); break;
+	        				case -39 : iv.setImageResource(R.drawable.slider0012); break;
+	        				case -38 : iv.setImageResource(R.drawable.slider0013); break;
+	        				case -37 : iv.setImageResource(R.drawable.slider0014); break;
+	        				case -36 : iv.setImageResource(R.drawable.slider0015); break;
+	        				case -35 : iv.setImageResource(R.drawable.slider0016); break;
+	        				case -34 : iv.setImageResource(R.drawable.slider0017); break;
+	        				case -33 : iv.setImageResource(R.drawable.slider0018); break;
+	        				case -32 : iv.setImageResource(R.drawable.slider0019); break;
+	        				case -31 : iv.setImageResource(R.drawable.slider0020); break;
+	        				case -30 : iv.setImageResource(R.drawable.slider0021); break;
+	        				case -29 : iv.setImageResource(R.drawable.slider0022); break;
+	        				case -28 : iv.setImageResource(R.drawable.slider0023); break;
+	        				case -27 : iv.setImageResource(R.drawable.slider0024); break;
+	        				case -26 : iv.setImageResource(R.drawable.slider0025); break;
+	        				case -25 : iv.setImageResource(R.drawable.slider0026); break;
+	        				case -24 : iv.setImageResource(R.drawable.slider0027); break;
+	        				case -23 : iv.setImageResource(R.drawable.slider0028); break;
+	        				case -22 : iv.setImageResource(R.drawable.slider0029); break;
+	        				case -21 : iv.setImageResource(R.drawable.slider0030); break;
+	        				case -20 : iv.setImageResource(R.drawable.slider0031); break;
+	        				case -19 : iv.setImageResource(R.drawable.slider0032); break;
+	        				case -18 : iv.setImageResource(R.drawable.slider0033); break;
+	        				case -17 : iv.setImageResource(R.drawable.slider0034); break;
+	        				case -16 : iv.setImageResource(R.drawable.slider0035); break;
+	        				case -15 : iv.setImageResource(R.drawable.slider0036); break;
+	        				case -14 : iv.setImageResource(R.drawable.slider0037); break;
+	        				case -13 : iv.setImageResource(R.drawable.slider0038); break;
+	        				case -12 : iv.setImageResource(R.drawable.slider0039); break;
+	        				case -11 : iv.setImageResource(R.drawable.slider0040); break;
+	        				case -10 : iv.setImageResource(R.drawable.slider0041); break;
+	        				case -9 : iv.setImageResource(R.drawable.slider0042); break;
+	        				case -8 : iv.setImageResource(R.drawable.slider0043); break;
+	        				case -7 : iv.setImageResource(R.drawable.slider0044); break;
+	        				case -6 : iv.setImageResource(R.drawable.slider0045); break;
+	        				case -5 : iv.setImageResource(R.drawable.slider0046); break;
+	        				case -4 : iv.setImageResource(R.drawable.slider0047); break;
+	        				case -3 : iv.setImageResource(R.drawable.slider0048); break;
+	        				case -2 : iv.setImageResource(R.drawable.slider0049); break;
+	        				case -1 : iv.setImageResource(R.drawable.slider0050); break;
+	        				case 0 : iv.setImageResource(R.drawable.slider0051); break;
+	        				case 1 : iv.setImageResource(R.drawable.slider0052); break;
+	        				case 2 : iv.setImageResource(R.drawable.slider0053); break;
+	        				case 3 : iv.setImageResource(R.drawable.slider0054); break;
+	        				case 4 : iv.setImageResource(R.drawable.slider0055); break;
+	        				case 5 : iv.setImageResource(R.drawable.slider0056); break;
+	        				case 6 : iv.setImageResource(R.drawable.slider0057); break;
+	        				case 7 : iv.setImageResource(R.drawable.slider0058); break;
+	        				case 8 : iv.setImageResource(R.drawable.slider0059); break;
+	        				case 9 : iv.setImageResource(R.drawable.slider0060); break;
+	        				case 10 : iv.setImageResource(R.drawable.slider0061); break;
+	        				case 11 : iv.setImageResource(R.drawable.slider0062); break;
+	        				case 12 : iv.setImageResource(R.drawable.slider0063); break;
+	        				case 13 : iv.setImageResource(R.drawable.slider0064); break;
+	        				case 14 : iv.setImageResource(R.drawable.slider0065); break;
+	        				case 15 : iv.setImageResource(R.drawable.slider0066); break;
+	        				case 16 : iv.setImageResource(R.drawable.slider0067); break;
+	        				case 17 : iv.setImageResource(R.drawable.slider0068); break;
+	        				case 18 : iv.setImageResource(R.drawable.slider0069); break;
+	        				case 19 : iv.setImageResource(R.drawable.slider0070); break;
+	        				case 20 : iv.setImageResource(R.drawable.slider0071); break;
+	        				case 21 : iv.setImageResource(R.drawable.slider0072); break;
+	        				case 22 : iv.setImageResource(R.drawable.slider0073); break;
+	        				case 23 : iv.setImageResource(R.drawable.slider0074); break;
+	        				case 24 : iv.setImageResource(R.drawable.slider0075); break;
+	        				case 25 : iv.setImageResource(R.drawable.slider0076); break;
+	        				case 26 : iv.setImageResource(R.drawable.slider0077); break;
+	        				case 27 : iv.setImageResource(R.drawable.slider0078); break;
+	        				case 28 : iv.setImageResource(R.drawable.slider0079); break;
+	        				case 29 : iv.setImageResource(R.drawable.slider0080); break;
+	        				case 30 : iv.setImageResource(R.drawable.slider0081); break;
+	        				case 31 : iv.setImageResource(R.drawable.slider0082); break;
+	        				case 32 : iv.setImageResource(R.drawable.slider0083); break;
+	        				case 33 : iv.setImageResource(R.drawable.slider0084); break;
+	        				case 34 : iv.setImageResource(R.drawable.slider0085); break;
+	        				case 35 : iv.setImageResource(R.drawable.slider0086); break;
+	        				case 36 : iv.setImageResource(R.drawable.slider0087); break;
+	        				case 37 : iv.setImageResource(R.drawable.slider0088); break;
+	        				case 38 : iv.setImageResource(R.drawable.slider0089); break;
+	        				case 39 : iv.setImageResource(R.drawable.slider0090); break;
+	        				case 40 : iv.setImageResource(R.drawable.slider0091); break;
+	        				case 41 : iv.setImageResource(R.drawable.slider0092); break;
+	        				case 42 : iv.setImageResource(R.drawable.slider0093); break;
+	        				case 43 : iv.setImageResource(R.drawable.slider0094); break;
+	        				case 44 : iv.setImageResource(R.drawable.slider0095); break;
+	        				case 45 : iv.setImageResource(R.drawable.slider0096); break;
+	        				case 46 : iv.setImageResource(R.drawable.slider0097); break;
+	        				case 47 : iv.setImageResource(R.drawable.slider0098); break;
+	        				case 48 : iv.setImageResource(R.drawable.slider0099); break;
+	        				case 49 : iv.setImageResource(R.drawable.slider0100); break;
+	        				case 50 : iv.setImageResource(R.drawable.slider0100); break;
+	        				}
 	        				return v;
         				}
         				else

@@ -151,9 +151,10 @@ public class CS247Service extends IntentService {
 			        //sort by date
 			        Collections.sort(listOfInformation);
 			        
-			        for(int i = 20; i<listOfInformation.size(); i++)
+			        for(int i = newsArray.length(); i<listOfInformation.size(); i++)
 			        {
-			        	listOfInformation.remove(i);
+			        	((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(listOfInformation.get(20).hashCode());
+			        	listOfInformation.remove(newsArray.length());
 			        }
 			        
 			        listener.onSuccess();
@@ -218,10 +219,10 @@ public class CS247Service extends IntentService {
 					Intent notificationIntent = new Intent(getApplicationContext(), DrillDownInformation.class);
 					notificationIntent.putExtra(Constants.ImportantInformationTag, info);
 					
-					PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+					PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), info.hashCode(), notificationIntent, 0);
 					not.setLatestEventInfo(getApplicationContext(), "Important", info.toString(), contentIntent);
 					
-					notificationManager.notify(i, not);
+					notificationManager.notify(info.hashCode(), not);
 				}
 			}
 		}
