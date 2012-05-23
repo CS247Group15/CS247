@@ -61,8 +61,7 @@ public class Analysis {
 			String description=null;
 			String source=null;
 			String date=null;
-			String tmp = "";
-			String tmp2 = "";
+
 			
 		while(forever==1)
 		{
@@ -90,10 +89,9 @@ public class Analysis {
 					if (rawRes.next())
 					{
 						title = rawRes.getString(1);
-						tmp = escapeChars(title);
 						//System.out.println("Entry found in table: " + tmp);
 						searchFinal = con.createStatement();
-						finalRes = searchFinal.executeQuery("SELECT * FROM finalData WHERE Title = \"" + tmp + "\";");
+						finalRes = searchFinal.executeQuery("SELECT * FROM finalData WHERE Title = \"" + escapeChars(title) + "\";");
 						if (finalRes.next())
 						{
 							//System.out.println("The entry already exists in finaldata: " + tmp);
@@ -127,7 +125,7 @@ public class Analysis {
 			try
 			{
 				searchFinal = con.createStatement();
-				finalRes = searchFinal.executeQuery("SELECT * FROM finalData WHERE Title = \"" + title + "\";");
+				finalRes = searchFinal.executeQuery("SELECT * FROM finalData WHERE Title = \"" + escapeChars(title) + "\";");
 				if (finalRes.next())
 				{
 					cont=0;
@@ -142,9 +140,7 @@ public class Analysis {
 			
 			if (cont==1)	//If the story doesn't exist in finaldata yet, continue.
 			{
-				String tmpDes = escapeChars(description);
-				String tmpSource = escapeChars(source);
-				insertStoryToFinalData(tmp,tmpDes,tmpSource,date);
+				insertStoryToFinalData(title,description,source,date);
 
 				words = breakWords(description);
 				
@@ -156,8 +152,7 @@ public class Analysis {
 						tempValue=0;
 						search = con.createStatement();
 						//System.out.println(words[x]);
-						tmp2 = escapeChars(words[x]);
-						searchRes = search.executeQuery("SELECT * FROM words WHERE Word = \"" + tmp2 + "\";");
+						searchRes = search.executeQuery("SELECT * FROM words WHERE Word = \"" + escapeChars(words[x]) + "\";");
 						if (searchRes.next())
 						{
 							word = searchRes.getString(1);
@@ -168,7 +163,15 @@ public class Analysis {
 						search.close();
 					}
 					insert = con.createStatement();
-					insert.executeUpdate("UPDATE finalData SET Sentiment=\'" + totalValue + "\' WHERE Title=\"" + title + "\";");
+					if (totalValue>50)		//If the semantic value crosses the max or min bounds, then set move the score back into the bounds.
+					{
+						totalValue=50;
+					}
+					if (totalValue<-50)
+					{
+						totalValue=-50;
+					}
+					insert.executeUpdate("UPDATE finalData SET Sentiment=\'" + totalValue + "\' WHERE Title=\"" + escapeChars(title) + "\";");
 					insert.close();
 				}
 				catch (SQLException ex)
@@ -198,7 +201,7 @@ public class Analysis {
 					for (int x=0; x<wordList.length; x++)
 					{
 						search = con.createStatement();
-						searchRes = search.executeQuery("SELECT Total FROM nounstotal WHERE Word = \"" + wordList[x] + "\";");
+						searchRes = search.executeQuery("SELECT Total FROM nounstotal WHERE Word = \"" + escapeChars(wordList[x]) + "\";");
 						if (searchRes.next())
 						{
 							//System.out.println("Found the word in the noun total list: " + wordList[x]);
@@ -227,18 +230,33 @@ public class Analysis {
 				
 				tempValue=0;
 				importanceValue=0;
+				wordList = breakWords(title+ " " + description);		//Change wordList to be both the title
+				String importantList=null;		//This is the list of important words in the story, which is output so that the app can display how the importance number was influenced
 				
 				for (int x=0; x<wordList.length; x++)	//Try calculating the important words amount
 				{
+					tempValue=0;
 					tempValue = importantWordValue(wordList[x].toLowerCase());
 					//System.out.println("Checked the importance of: " + wordList[x].toLowerCase() + " returned a value of: " + tempValue);
 					importanceValue=tempValue+importanceValue;
+					if (tempValue!=0)
+					{
+						if (importantList!=null)
+						{
+							importantList = importantList + ", " + wordList[x];
+						}
+						else
+						{
+							importantList = wordList[x];
+						}
+					}
 				}
 				
 				try
 				{
 					insert = con.createStatement();
-					insert.executeUpdate("UPDATE finalData SET Importance = \'" + importanceCalc((float)nounValue,(float)twitterValue, (float)importanceValue) + "\' WHERE Title = \"" + title + "\";");
+					insert.executeUpdate("UPDATE finalData SET Importance = \'" + importanceCalc((float)nounValue,(float)twitterValue, (float)importanceValue) + "\' WHERE Title = \"" + escapeChars(title) + "\";");
+					insert.executeUpdate("UPDATE finalData SET ImportantNouns = \"" + importantList + "\" WHERE Title = \"" + escapeChars(title) + "\";");
 					insert.close();
 				}
 				catch (SQLException ex)
@@ -246,9 +264,6 @@ public class Analysis {
 					System.out.println("Problem updating finaldata");
 				}
 			}	//End of if statement that checks if the story has been processed already
-			
-			
-			
 			
 			
 			try
@@ -286,6 +301,7 @@ public class Analysis {
 	
 	public static int importantWordValue(String word)
 	{
+		//System.out.println("Checking for " + word + " in important word list");
 		int returnValue=0;
 		Connection con = getDatabaseConnection();
 		
@@ -295,10 +311,10 @@ public class Analysis {
 			ResultSet searchRes;
 			
 			search = con.createStatement();
-			searchRes = search.executeQuery("SELECT * FROM importantWords WHERE word = \"" + word + "\";");
+			searchRes = search.executeQuery("SELECT * FROM importantWords WHERE word = \"" + escapeChars(word) + "\";");
 			if (searchRes.next())
 			{
-				//System.out.println("The term: " + word + " was found in importantWords");
+				System.out.println("The term: " + word + " was found in importantWords");
 				returnValue = searchRes.getInt(2);
 			}
 			search.close();
@@ -323,7 +339,7 @@ public class Analysis {
 			ResultSet searchRes;
 			
 			search = con.createStatement();
-			searchRes = search.executeQuery("SELECT * FROM trends WHERE Trend = \"" + word + "\";");
+			searchRes = search.executeQuery("SELECT * FROM trends WHERE Trend = \"" + escapeChars(word) + "\";");
 			if (searchRes.next())
 			{
 				//System.out.println("The term: " + word + " was found in trends");
@@ -368,18 +384,18 @@ public class Analysis {
 			while (trackResult.next()) 
 			{
 				word = (trackResult.getString(1));
-				totalResult = searchTotal.executeQuery("SELECT Word FROM NounsTotal WHERE Word = \"" + word + "\";");	//See if the current noun is already listed in the totals table
+				totalResult = searchTotal.executeQuery("SELECT Word FROM NounsTotal WHERE Word = \"" + escapeChars(word) + "\";");	//See if the current noun is already listed in the totals table
 				if (!totalResult.next())
 				{
 					insertNounTotal(word);	//If noun does not exist in NounsTotal, add it to the table
 				}
 
-				totalResult = searchTotal.executeQuery("SELECT Total FROM NounsTotal WHERE Word = \"" + word + "\";");	//Get the current value of the noun
+				totalResult = searchTotal.executeQuery("SELECT Total FROM NounsTotal WHERE Word = \"" + escapeChars(word) + "\";");	//Get the current value of the noun
 				if (totalResult.next())
 				{
 					tempTotal = totalResult.getInt(1);
 				}
-				updateTotal.executeUpdate("UPDATE NounsTotal SET Total = " + (tempTotal+1) + " WHERE Word = \"" + word + "\";");	//Update the entry in the table
+				updateTotal.executeUpdate("UPDATE NounsTotal SET Total = " + (tempTotal+1) + " WHERE Word = \"" + escapeChars(word) + "\";");	//Update the entry in the table
 			}
 			searchTrack.close();
 			searchTotal.close();
@@ -401,7 +417,7 @@ public class Analysis {
 		try
 		{
 			insert = con.createStatement();
-			insert.executeUpdate("INSERT INTO NounsTotal VALUES(\"" + word + "\", \'0\');");
+			insert.executeUpdate("INSERT INTO NounsTotal VALUES(\"" + escapeChars(word) + "\", \'0\');");
 			insert.close();
 			con.close();
 		}
@@ -415,6 +431,7 @@ public class Analysis {
 	{
 		int sentiment = 0;
 		int importance = 0;
+		String importantNouns=" ";
 		
 		Connection con = getDatabaseConnection();
 		Statement insert;
@@ -422,12 +439,13 @@ public class Analysis {
 		try
 		{
 			insert = con.createStatement();
-			insert.executeUpdate("INSERT INTO finalData VALUES(\"" + title + "\", \"" + description + "\", \"" + source + "\", \"" + date + "\", \'" + sentiment + "\', \'" + importance + "\');");
+			insert.executeUpdate("INSERT INTO finalData VALUES(\"" + escapeChars(title) + "\", \"" + escapeChars(description) + "\", \"" + escapeChars(source) + "\", \"" + date + "\", \'" + sentiment + "\', \'" + importance + "\', \"" + escapeChars(importantNouns) + "\");");
 			insert.close();
 			con.close();
 		}
 		catch (SQLException ex)
 		{
+			ex.printStackTrace();
 			System.out.println("Error inserting into finalData");
 		}
 	}
@@ -464,7 +482,7 @@ public class Analysis {
 		try
 		{
 			insert = con.createStatement();
-			insert.executeUpdate("INSERT INTO NounsTrack VALUES(\"" + word + "\", \'" + getDateTime() + "\');");
+			insert.executeUpdate("INSERT INTO NounsTrack VALUES(\"" + escapeChars(word) + "\", \'" + getDateTime() + "\');");
 			insert.close();
 			con.close();
 		}
@@ -486,9 +504,9 @@ public class Analysis {
 		
 		int returnValue=0;
 		float calcRes=0;
-		int tempTotalNouns=0;
+		int tempMaxNouns=0;
 		int tempImportance=0;
-		int totalNouns=0;
+		int maxNouns=0;
 		int maxTweets=10;
 		int maxImportance=0;
 		
@@ -505,15 +523,20 @@ public class Analysis {
 			searchRes = search.executeQuery("SELECT total FROM NounsTotal");
 			while (searchRes.next())
 			{
-				tempTotalNouns = searchRes.getInt(1);
-				totalNouns = tempTotalNouns+totalNouns;	//Add up the total max score that could be had from the nouns list.
+				tempMaxNouns = searchRes.getInt(1);
+				if (maxNouns<tempMaxNouns)
+				{
+					maxNouns = tempMaxNouns;	//Add up the total max score that could be had from the nouns list.
+				}
+			}
+			if (maxNouns>20)
+			{
+				maxNouns=20;
 			}
 			
-			searchRes = search.executeQuery("SELECT value FROM importantWords");
-			while (searchRes.next())
+			if (importance>60)
 			{
-				tempImportance = searchRes.getInt(1);
-				maxImportance = tempImportance+maxImportance;	//Add up the total max score that could be had from the nouns list.
+				importance=60;
 			}
 			search.close();
 			con.close();
@@ -526,19 +549,16 @@ public class Analysis {
 		System.out.println("");
 		System.out.println("");
 		System.out.println("Calculating the importance with:");
-		System.out.println("Noun:" + noun + "         totalNouns: " + totalNouns);
+		System.out.println("Noun:" + noun);
 		System.out.println("Twitter: " + twitter + "            maxTweets: " + maxTweets);
-		System.out.println("Important words: " + importance + "            maximportance: " + maxImportance);
-		
-		nouns=noun/totalNouns;
+		System.out.println("Importance: " + importance);
 		twits=twitter/maxTweets;
-		words=importance/maxImportance;
 		
-		System.out.println("Nouns:" + nouns + " twits: " + twits + " words: " + words);
+		System.out.println("Nouns:" + noun + " twits: " + twits + " words: " + words);
 		
 		
-		calcRes = (20*nouns)+(30*twits)+(50*words);
-		System.out.println("Nouns part:" + (20*nouns) + " twits part: " + (30*twits) + " words parts: " + (50*words));
+		calcRes = (noun)+(20*twits)+(importance);
+		System.out.println("Nouns part:" + (noun) + " twits part: " + (30*twits) + " words parts: " + (importance));
 		returnValue = (int)calcRes;
 		System.out.println("Retruning:" + returnValue + " from calcRes: " + calcRes);
 		System.out.println("");
@@ -557,7 +577,7 @@ public class Analysis {
 				e.printStackTrace();
 			}
 		try {
-			con =DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root","password");
+			con =DriverManager.getConnection("jdbc:mysql://localhost:3306/rawdata","user","root");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
