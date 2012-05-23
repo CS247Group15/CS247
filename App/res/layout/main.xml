@@ -29,32 +29,33 @@
         android:layout_marginLeft="20sp"
         android:layout_marginBottom="20sp"
         android:layout_marginRight="20sp">
+
+    <TextView
+        android:id="@+id/sourcesBox"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5sp"
+        android:background="#FFFFFF"
+        android:text="Source"
+        android:textColor="#000000" />
+
     <TextView
         android:id="@+id/inferenceBox"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
         android:layout_marginBottom="5sp"
-        android:text="Inference" 
-        android:textColor="#FFFFFF"/>
-
-    <TextView
-        android:id="@+id/sourcesBox"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:layout_marginBottom="5sp"
-        android:background="#FFFFFF"
-        android:text="Sources" 
-        android:textColor="#000000"/>
-
+        android:text="Inference"
+        android:textColor="#FFFFFF" />
+
     <TextView
         android:id="@+id/otherInfoBox"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:background="#FFFFFF"
         android:text="Additional information"
         android:textColor="#000000" />
+
 </LinearLayout>
 </LinearLayout>

@@ -45,15 +45,16 @@ public class DrillDownInformation extends Activity {
 		if(information!=null)
 		{
 			((TextView)findViewById(R.id.heading_text)).setText(information.toString());
-			((TextView)findViewById(R.id.inferenceBox)).setText(information.getInference());
-			((TextView)findViewById(R.id.otherInfoBox)).setText(information.getOther());
-			String sources = "";
-			List<String> sourcesList = information.getSources();
-			for(int i = 0; i<sourcesList.size(); i++)
+			((TextView)findViewById(R.id.inferenceBox)).setText(information.getDescription());
+			((TextView)findViewById(R.id.sourcesBox)).setText("Source: " + information.getSource());
+			if(information.getNouns().trim().equals("")&&information.getNouns().equals("null"))
 			{
-				sources += (sourcesList.get(i)+"\n");
+				((TextView)findViewById(R.id.otherInfoBox)).setText("Important words: " + information.getNouns());
 			}
-			((TextView)findViewById(R.id.sourcesBox)).setText(sources);
+			else
+			{
+				((TextView)findViewById(R.id.otherInfoBox)).setText("No important words found.");
+			}
 		}
 	}
 	

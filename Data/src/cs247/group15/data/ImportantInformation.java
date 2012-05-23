@@ -22,9 +22,11 @@ public class ImportantInformation implements Serializable, XmlConverter, ListCla
 	private final static String datetag = "Date";
 	private int importanceLevel = 0;
 	private final static String importanceLevelTag = "Importance";
+	private int sentimentLevel = 0;
+	private final static String sentimentTag = "Sentiment";
 	private String inference= "";
 	private final static String inferenceTag = "Inference";
-	private List<String> sources = new ArrayList<String>();
+	private String sources = "";
 	private final static String sourcesTag = "Sources";
 	private final static String sourceTag = "Source";
 	private String other = "";
@@ -36,19 +38,20 @@ public class ImportantInformation implements Serializable, XmlConverter, ListCla
 		if(date instanceof PrintableDate) {this.date = (PrintableDate)date;}
 		else {this.date = new PrintableDate(date);}
 	}
-	public ImportantInformation(String heading, int importance, Date date, String inference, List<String> sources, String otherInfo)
+	public ImportantInformation(String heading, int importance, int sentiment, Date date, String inference, String source, String otherInfo)
 	{
 		this.heading = heading;
 		this.importanceLevel = importance;
+		this.sentimentLevel = sentiment;
 		if(date instanceof PrintableDate) {this.date = (PrintableDate)date;}
 		else {this.date = new PrintableDate(date);}
 		this.inference = inference;
-		this.sources = sources;
+		this.sources = source;
 		this.other = otherInfo;
 	}
 	
 	public String toString(){return heading;}
-	public List<String> getSources() {return sources;}
+	public String getSource() {return sources;}
 	public PrintableDate getDate(){return date;}
 	public String getInference(){return inference;}
 	public String getOther() {return other;}
@@ -75,12 +78,9 @@ public class ImportantInformation implements Serializable, XmlConverter, ListCla
 		}
 		rootElement.addContent(new Element(inferenceTag).setText(inference));
 		
-		Element sourcesElement = new Element(sourcesTag);
-		for(String source : sources)
-		{
-			sourcesElement.addContent(new Element(sourceTag).setText(source));
-		}
-		rootElement.addContent(sourcesElement);
+		rootElement.addContent(new Element(sentimentTag).setText(""+sentimentLevel));
+		
+		rootElement.addContent(new Element(sourcesTag).setText(sources));
 		
 		rootElement.addContent(new Element(otherTag).setText(other));
 		return rootElement;
