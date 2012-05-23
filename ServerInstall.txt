@@ -1,0 +1,34 @@
+The system requires both Apache Tomcat and MySQL to be installed. (Most easily installed on windows)
+
+###################################################################
+
+Install Apache:
+Run apache-tomcat-6.0.35.exe to start tomcat installation. When the option arises, set the http port to 8085. (the default will be 8080)
+
+Once apache tomcat is installed. overwrite the configuration files (found in "Tomcat v6.0 Server at localhost-config" ) with the files 
+found in the "TomcatConfig > config" folder.
+
+run Apache Tomcat.
+
+###################################################################
+
+Setting up the database:
+Install MySQL, and create a new database on localhost 3306. The database should have a username as "user" and password "root".
+
+Once MySQL is installed on the system, use the following command:
+mysql -u user -proot localhost rawdata < rawdata.sql
+to set up all the tables needed for the system.
+
+Once this is done. Run the setup file in "CS247\SetupDatabase" which will finish off setting up the databases.
+
+##################################################################
+
+next, compile all java files and run "webBot.java" in "CS247\Server\src\cs247\group15\server"
+
+with "webBot" still running compile and run Analysis.java in "CS247\DataAnalysis\RSSAnalysis\src"
+
+This should get the server-side of our system running fully.
+
+##################################################################
+
+
