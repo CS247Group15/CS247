@@ -24,7 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cs247.group15.data.Constants;
-import cs247.group15.data.DataRequest;
 import cs247.group15.data.ImportantInformation;
 import cs247.group15.data.ListClass;
 import cs247.group15.data.PrintableDate;
@@ -47,13 +46,18 @@ public class CS247Service extends IntentService {
 	}
 
 	ServiceBinder binder;
+	boolean started = false;
 
 	@Override
 	public int onStartCommand (Intent intent, int flags, int startId)
 	{
 		Log.d(Constants.information, "The service has been started.");
-		binder = new ServiceBinder();
-		binder.startAutoUpdater();
+		if(!started)
+		{
+			binder = new ServiceBinder();
+			binder.startAutoUpdater();
+			started = true;
+		}
 		return START_STICKY;
 	}
 	
@@ -118,9 +122,9 @@ public class CS247Service extends IntentService {
 					response.getEntity().writeTo(out);
 			        out.close();
 			        String responseString = out.toString();
-			        Log.d("TEST", responseString);
 			        
 			        List<ImportantInformation> newInfo = new ArrayList<ImportantInformation>();
+			        List<ImportantInformation> information = new ArrayList<ImportantInformation>();
 			        JSONObject json = new JSONObject(responseString);
 			        JSONArray newsArray = json.getJSONArray("news");
 			        for(int i=0; i<newsArray.length(); i++)
@@ -143,20 +147,18 @@ public class CS247Service extends IntentService {
 			        	ImportantInformation info = new ImportantInformation(heading, importanceInt, sentimentInt, dateDate, description, source, nouns);
 			        	if(!listOfInformation.contains(info))
 			        	{
+			        		Log.d("Listofinformation:", listOfInformation.toString());
+			        		Log.d("info:", info.toString());
 			        		newInfo.add(info);
-			        		listOfInformation.add(info);
 			        	}
+			        	information.add(info);
 			        }
 			        
-			        //sort by date
-			        Collections.sort(listOfInformation);
-			        
-			        for(int i = newsArray.length(); i<listOfInformation.size(); i++)
-			        {
-			        	((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(listOfInformation.get(20).hashCode());
-			        	listOfInformation.remove(newsArray.length());
-			        }
-			        
+			        Log.d("information presort:", information.toString());
+			        Collections.sort(information);
+			        Log.d("information postsort:", information.toString());
+			        listOfInformation = information;
+			      
 			        listener.onSuccess();
 			        checkNotifications(newInfo); //put the list of new infos into here
 			    } 
@@ -185,26 +187,38 @@ public class CS247Service extends IntentService {
 
 				@Override
 				public void run() {
-					sendRequest(new OnRequestComplete() {
-						
-						public void onSuccess() {
-							//Set last updated time to the time associated with the last ImportantInformation received
-							if(listOfInformation.size()>0)
-							{
-								Properties.setLastUpdate(
-									listOfInformation.get(listOfInformation.size()-1).getDate().getTime()
-									);
+					try
+					{
+						sendRequest(new OnRequestComplete() {
+							
+							public void onSuccess() {
+								//Set last updated time to the time associated with the last ImportantInformation received
+								if(listOfInformation.size()>0)
+								{
+									Properties.setLastUpdate(
+										listOfInformation.get(0).getDate().getTime()
+										);
+								}
 							}
-						}
-						
-						public void onFail() {}
-					});
-				}}, new Date(System.currentTimeMillis()),
+							
+							public void onFail()
+							{
+								
+							}
+						});
+					}
+					catch(IllegalArgumentException e)
+					{
+						Log.d(Constants.error, e.getMessage());
+					}
+				}}
+				, new Date(System.currentTimeMillis()),
 			Properties.getUpdateFrequency());
 		}
 		
 		private void checkNotifications(List<ImportantInformation> newList)
 		{
+			Log.d("newList:", newList.toString());
 			NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 			for(int i = 0; i<newList.size(); i++)
 			{

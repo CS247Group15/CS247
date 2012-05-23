@@ -12,34 +12,7 @@ public class Analysis {
 	public static void main(String[] args)
 	{
 		int forever=1;
-		//#################################################################
-		//
-		//
-		//					REMOVE CODE BEFORE SENDING OFF, THIS IS FOR TEST PURPOSES ONLY
-		//
-		//
-		//##################################################################
-		try
-		{
-			Connection con = getDatabaseConnection();
-			Statement dropNounTrack;
-			dropNounTrack = con.createStatement();
-			dropNounTrack.executeUpdate("DELETE FROM Nounstrack");
-			dropNounTrack.close();
-			con.close();
-		}
-		catch (SQLException ex)
-		{
-			System.out.println("No new stories in rawdata");
-		}
 		
-		//#################################################################
-		//
-		//
-		//					END OF MUST BE REMOVED CODE.
-		//
-		//
-		//##################################################################
 			
 			Statement insert;
 			Statement search;
@@ -64,6 +37,9 @@ public class Analysis {
 			String tmp = "";
 			String tmp2 = "";
 			
+			int offset=0;	//This is used to keep track of where in the rawdata table the analysis program currently is.
+			
+			
 		while(forever==1)
 		{
 			Connection con = getDatabaseConnection();
@@ -74,16 +50,12 @@ public class Analysis {
 			int cont=1;
 			int nounValue=0;
 			int importanceValue=0;
-			int firstTime=1;
 			
 			try
 			{
 				searchRaw = con.createStatement();
-				if (firstTime==1)
-				{
-					rawRes = searchRaw.executeQuery("SELECT * FROM rawdata;");
-					firstTime=0;
-				}
+				rawRes = searchRaw.executeQuery("SELECT * FROM rawdata LIMIT 1 OFFSET " + offset + ";");
+				offset++;
 				do
 				{
 					loop=0;
@@ -91,12 +63,12 @@ public class Analysis {
 					{
 						title = rawRes.getString(1);
 						tmp = escapeChars(title);
-						//System.out.println("Entry found in table: " + tmp);
+						System.out.println("Entry found in table: " + tmp);
 						searchFinal = con.createStatement();
 						finalRes = searchFinal.executeQuery("SELECT * FROM finalData WHERE Title = \"" + tmp + "\";");
 						if (finalRes.next())
 						{
-							//System.out.println("The entry already exists in finaldata: " + tmp);
+							System.out.println("The entry already exists in finaldata: " + tmp);
 							loop=1;
 						}
 						else
@@ -117,6 +89,7 @@ public class Analysis {
 						forever=0;
 					}
 				} while (loop==1);
+				searchRaw.close();
 			}
 			catch (SQLException ex)
 			{
@@ -543,6 +516,11 @@ public class Analysis {
 			{
 				importance=60;
 			}
+			
+			if (twits>10)
+			{
+				twits=10;
+			}
 			search.close();
 			con.close();
 		}
@@ -569,7 +547,10 @@ public class Analysis {
 		System.out.println("");
 		System.out.println("");
 		
-		
+		if (returnValue>100)
+		{
+			returnValue=100;
+		}
 		return returnValue;
 	}
 	

@@ -9,6 +9,9 @@ import cs247.group15.data.ImportantInformation;
 import cs247.group15.data.ListClass;
 import cs247.group15.data.Properties;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -46,6 +49,39 @@ public class StartActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen1);
         
+        if(Constants.serverURL.equals(""))
+        {
+        	showDialog();
+        }
+        else
+        {
+        	continueCreatingScreen();
+        }
+    }
+    
+    private void showDialog()
+    {
+    	final Dialog dialog = new Dialog(StartActivity.this);
+        dialog.setContentView(R.layout.server_set_up_dialog);
+        dialog.findViewById(R.id.serverSelectButton).setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				String serverAddress = ((TextView)dialog.findViewById(R.id.serverentertext)).getText().toString().trim();
+				if(!serverAddress.equals(""))
+				{
+					Constants.serverURL = "http://" + serverAddress + ":8085/JavaServlet/Servlet";
+					continueCreatingScreen();
+					dialog.dismiss();
+				}
+			}
+		});
+        dialog.setTitle("Server Set-Up");
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+    
+    public void continueCreatingScreen()
+    {
         Log.d(Constants.information, "Starting the service.");
         startService(new Intent(StartActivity.this, CS247Service.class));
         bindService(new Intent(StartActivity.this, CS247Service.class), serviceConnection, 0);
@@ -230,7 +266,12 @@ public class StartActivity extends ListActivity {
 		
 		public void onServiceConnected(ComponentName name, IBinder iService) {
 			service = (ServiceBinder) iService;
-			service.sendRequest(screenUpdater);
+			try {service.sendRequest(screenUpdater);}
+			catch(IllegalArgumentException e)
+			{
+				Log.d(Constants.error, e.getMessage());
+				showDialog();
+			}
 		}
 	};
     
@@ -238,7 +279,7 @@ public class StartActivity extends ListActivity {
     public void onDestroy()
     {
     	super.onDestroy();
-    	unbindService(serviceConnection);
+    	if(service!=null){unbindService(serviceConnection);}
     }
     
     //When an element in the list is clicked, go to the DrillDownInformation screen & pass it which ImportantInformation to populate the list with
@@ -297,6 +338,7 @@ public class StartActivity extends ListActivity {
     		updateScreen(service.getDatedImportantInformationList());
     		serverStatus.setText("Server Online");
     		serverStatus.setBackgroundColor(Color.GREEN);
+    		if(Properties.getImportanceLevel()>0) {((ToggleButton)findViewById(R.id.toggleButton)).setChecked(true);}
 		}
 		
 		public void onFail() {
@@ -306,6 +348,7 @@ public class StartActivity extends ListActivity {
 					Toast.makeText(getApplicationContext(), "Error occurred when requesting update", Toast.LENGTH_LONG).show();
 					serverStatus.setText("Server Offline");
 					serverStatus.setBackgroundColor(Color.RED);
+					((ToggleButton)findViewById(R.id.toggleButton)).setChecked(false);
 				}
 			});
 		}

@@ -14,7 +14,7 @@ import org.jdom.Element;
  * Author: KB
  */
 
-public class ImportantInformation implements Serializable, XmlConverter, ListClass {
+public class ImportantInformation implements Serializable, XmlConverter, ListClass, Comparable<ImportantInformation> {
 
 	private String heading = "";
 	private final static String headingtag = "Heading";
@@ -24,48 +24,47 @@ public class ImportantInformation implements Serializable, XmlConverter, ListCla
 	private final static String importanceLevelTag = "Importance";
 	private int sentimentLevel = 0;
 	private final static String sentimentTag = "Sentiment";
-	private String inference= "";
+	private String description= "";
 	private final static String inferenceTag = "Inference";
 	private String sources = "";
 	private final static String sourcesTag = "Sources";
 	private final static String sourceTag = "Source";
-	private String other = "";
-	private final static String otherTag = "Other";
-	
-	public ImportantInformation(String heading, Date date)
-	{
-		this.heading = heading;
-		if(date instanceof PrintableDate) {this.date = (PrintableDate)date;}
-		else {this.date = new PrintableDate(date);}
-	}
-	public ImportantInformation(String heading, int importance, int sentiment, Date date, String inference, String source, String otherInfo)
+	private String nouns = "";
+
+	public ImportantInformation(String heading, int importance, int sentiment, Date date, String description, String source, String nouns)
 	{
 		this.heading = heading;
 		this.importanceLevel = importance;
 		this.sentimentLevel = sentiment;
 		if(date instanceof PrintableDate) {this.date = (PrintableDate)date;}
 		else {this.date = new PrintableDate(date);}
-		this.inference = inference;
+		this.description = description;
 		this.sources = source;
-		this.other = otherInfo;
+		this.nouns = nouns;
 	}
 	
 	public String toString(){return heading;}
 	public String getSource() {return sources;}
 	public PrintableDate getDate(){return date;}
-	public String getInference(){return inference;}
-	public String getOther() {return other;}
+	public String getDescription(){return description;}
+	public int getImportance() {return importanceLevel;}
+	public int getSentimence() {return sentimentLevel;}
 	
 	@Override
 	public boolean equals(Object o)
 	{
-		//FIXME: may want to tweak this depending on its use
 		if(o instanceof ImportantInformation)
 		{
 			ImportantInformation i = (ImportantInformation)o;
-			return (i.toString().equals(toString())&&i.getInference().equals(getInference()));
+			return (i.toString().equals(toString()));
 		}
 		return false;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return toString().hashCode();
 	}
 	
 	public Element toXml() {
@@ -76,13 +75,12 @@ public class ImportantInformation implements Serializable, XmlConverter, ListCla
 		{
 			rootElement.addContent(new Element(datetag).setText(""+date.getTime()));
 		}
-		rootElement.addContent(new Element(inferenceTag).setText(inference));
+		rootElement.addContent(new Element(inferenceTag).setText(description));
 		
 		rootElement.addContent(new Element(sentimentTag).setText(""+sentimentLevel));
 		
 		rootElement.addContent(new Element(sourcesTag).setText(sources));
 		
-		rootElement.addContent(new Element(otherTag).setText(other));
 		return rootElement;
 	}
 
@@ -90,5 +88,13 @@ public class ImportantInformation implements Serializable, XmlConverter, ListCla
 		
 		heading = element.getChildText(headingtag);
 		//TODO: write rest of this method
+	}
+
+	public int compareTo(ImportantInformation another) {
+		return (-(this.getDate().compareTo(another.getDate())));
+	}
+
+	public String getNouns() {
+		return nouns;
 	}
 }
