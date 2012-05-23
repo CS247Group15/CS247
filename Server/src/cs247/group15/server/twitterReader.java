@@ -1,3 +1,4 @@
+package cs247.group15.server;
 import java.util.Calendar;
 import java.sql.Connection;
 import java.sql.DriverManager;
