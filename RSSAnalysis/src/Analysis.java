@@ -12,34 +12,7 @@ public class Analysis {
 	public static void main(String[] args)
 	{
 		int forever=1;
-		//#################################################################
-		//
-		//
-		//					REMOVE CODE BEFORE SENDING OFF, THIS IS FOR TEST PURPOSES ONLY
-		//
-		//
-		//##################################################################
-		try
-		{
-			Connection con = getDatabaseConnection();
-			Statement dropNounTrack;
-			dropNounTrack = con.createStatement();
-			dropNounTrack.executeUpdate("DELETE FROM Nounstrack");
-			dropNounTrack.close();
-			con.close();
-		}
-		catch (SQLException ex)
-		{
-			System.out.println("No new stories in rawdata");
-		}
 		
-		//#################################################################
-		//
-		//
-		//					END OF MUST BE REMOVED CODE.
-		//
-		//
-		//##################################################################
 			
 			Statement insert;
 			Statement search;
@@ -543,6 +516,11 @@ public class Analysis {
 			{
 				importance=60;
 			}
+			
+			if (twits>10)
+			{
+				twits=10;
+			}
 			search.close();
 			con.close();
 		}
@@ -569,7 +547,10 @@ public class Analysis {
 		System.out.println("");
 		System.out.println("");
 		
-		
+		if (returnValue>100)
+		{
+			returnValue=100;
+		}
 		return returnValue;
 	}
 	
